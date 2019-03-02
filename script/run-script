@@ -1,0 +1,10 @@
+#!/bin/bash
+
+set -e
+
+appdir=$(cd $(dirname "$0")/.. && pwd)
+
+docker run \
+  -v $appdir:/app \
+  -v /app/node_modules \
+  -it urban-traffic $1
