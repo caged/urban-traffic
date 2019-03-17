@@ -1,0 +1,20 @@
+{
+  "private": true,
+  "name": "urban-traffic",
+  "version": "0.0.1",
+  "description": "urban traffic vis",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Justin Palmer",
+  "dependencies": {
+    "canvas": "^2.3.1",
+    "d3": "^5.9.1",
+    "d3-tile": "0.0.4",
+    "node-fetch": "^2.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^7.0.0"
+  }
+}
