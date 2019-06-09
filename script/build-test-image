@@ -7,10 +7,10 @@ const d3 = require('d3')
 const d3Tile = require('d3-tile')
 const fetch = require('node-fetch')
 
-const width = 256 * 6
+const width = 256 * 8
 const height = width
 
-const out = fs.createWriteStream('out.png')
+const out = fs.createWriteStream('out5.png')
 const canvas = createCanvas(width, height)
 const ctx = canvas.getContext('2d')
 
@@ -22,7 +22,7 @@ ctx.fill()
 const projection = d3
   .geoMercator()
   .center([-122.681944, 45.52])
-  .scale((1 << 21) / (2 * Math.PI))
+  .scale((1 << 20) / (2 * Math.PI))
   .translate([width / 2, height / 2])
 
 const tile = d3Tile
@@ -32,6 +32,19 @@ const tile = d3Tile
   .translate(projection([0, 0]))
 
 const path = d3.geoPath(projection).context(ctx)
+
+const thickness = d3
+  .scaleLinear()
+  .domain([1, 5])
+  .range([3, 1])
+
+// const color = d3.scaleSequential(d3.interpolateOrRd).domain([0, 10])
+
+const color = d3
+  .scaleThreshold()
+  .domain([4, 8, 10, 11])
+  // .range(['#ccc', '#5ac8c8', '#a5add3', '#be64ac'])
+  .range(['green', 'orange', 'red', 'black'])
 
 const tileData = Promise.all(
   tile().map(async d => {
@@ -44,10 +57,29 @@ const tileData = Promise.all(
   })
 )
 
-tileData.then(tiles => {
+function lineString(data) {
+  const { SHP: shp, TMC: tmc, CF: cf } = data
+  const coordinates = shp.map(leg => {
+    const coords = leg.value[0].trim()
+    return coords.split(' ').map(v => {
+      return v
+        .split(',')
+        .map(parseFloat)
+        .reverse()
+    })
+  })
+  return {
+    type: 'MultiLineString',
+    properties: { tmc, cf: cf[0], fc: shp[0].FC },
+    coordinates
+  }
+}
+
+function renderBaseLayer(tiles) {
   tiles.map(d => {
     ctx.beginPath()
     ctx.strokeStyle = '#aaa'
+    // console.log(d.data.water.features[0].geometry.coordinates)
     path({
       type: 'FeatureCollection',
       features: d.data.water.features.filter(d => d.properties.boundary)
@@ -59,6 +91,42 @@ tileData.then(tiles => {
     path(d.data.roads)
     ctx.stroke()
   })
+}
 
+function writeTrafficData(json) {
+  for (const rws of json.RWS) {
+    for (const rw of rws.RW) {
+      const { mid, FIS: fiss, LI: li, DE: de, PBT: pbt } = rw
+      for (const fis of fiss) {
+        for (const fi of fis.FI) {
+          const ls = lineString(fi)
+          const { fc, cf, tmc } = ls.properties
+          if (cf.JF >= 3) {
+            console.log(tmc.DE, cf.JF)
+            ctx.strokeStyle = color(cf.JF)
+            ctx.lineWidth = thickness(fc)
+            ctx.beginPath()
+            path(ls)
+            ctx.stroke()
+          }
+        }
+      }
+    }
+  }
+}
+
+function writeImage() {
   canvas.pngStream().pipe(out)
-})
+}
+
+tileData
+  .then(renderBaseLayer)
+  .then(() =>
+    writeTrafficData(
+      JSON.parse(
+        // fs.readFileSync('test-flow-ro-03-18-19-09:05:17.json', 'utf-8')
+        fs.readFileSync('test-flow-ro-06-09-19-09:33:00.json', 'utf-8')
+      )
+    )
+  )
+  .then(writeImage)

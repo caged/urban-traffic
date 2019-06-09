@@ -1,12 +1,13 @@
 #!/bin/bash
 
+source .env
+
 BBOX="45.391700,-122.826462;45.657728,-122.347183"
 
 here_incident_url="https://traffic.api.here.com/traffic/6.3/incidents.json\
 ?app_id=${APP_ID}\
 &app_code=${APP_CODE}\
-&bbox=$BBOX\
-&criticality=minor"
+&bbox=$BBOX"
 
 
 here_flow_url="https://traffic.api.here.com/traffic/6.1/flow.json\
@@ -15,4 +16,4 @@ here_flow_url="https://traffic.api.here.com/traffic/6.1/flow.json\
 &app_id=$APP_ID\
 &app_code=$APP_CODE"
 
-curl $here_flow_url
+curl $here_incident_url
