@@ -16,4 +16,4 @@ here_flow_url="https://traffic.api.here.com/traffic/6.1/flow.json\
 &app_id=$APP_ID\
 &app_code=$APP_CODE"
 
-curl $here_incident_url
+curl $here_flow_url

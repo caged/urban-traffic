@@ -2,3 +2,4 @@ test-flow.json
 .env
 node_modules
 *.png
+raw
