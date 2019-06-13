@@ -9,6 +9,7 @@ action "build" {
 }
 
 action "tag" {
+  needs = ["build"]
   uses = "actions/docker/tag@8cdf801b322af5f369e00d85e9cf3a7122f49108"
   args = "base github/base"
 }
