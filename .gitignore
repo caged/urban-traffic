@@ -3,3 +3,5 @@ test-flow.json
 node_modules
 *.png
 raw
+*.xml
+*.json
