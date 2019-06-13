@@ -1,6 +1,6 @@
 workflow "Update image on Docker Hub" {
   on = "push"
-  resolves = ["docker tag"]
+  resolves = ["docker publish"]
 }
 
 action "docker build" {
@@ -8,7 +8,14 @@ action "docker build" {
   args = "build -t $GITHUB_REPOSITORY ."
 }
 
-action "docker tag" {
-  uses = "actions/docker/tag@8cdf801b322af5f369e00d85e9cf3a7122f49108"
+action "Docker Login" {
+  uses = "actions/docker/login@8cdf801b322af5f369e00d85e9cf3a7122f49108"
   needs = ["docker build"]
+  secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
+}
+
+action "docker publish" {
+  uses = "actions/docker/cli@8cdf801b322af5f369e00d85e9cf3a7122f49108"
+  needs = ["Docker Login"]
+  args = "push $GITHUB_REPOSITORY"
 }
