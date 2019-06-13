@@ -10,7 +10,7 @@ here_incident_url="https://traffic.api.here.com/traffic/6.3/incidents.json\
 &bbox=$BBOX"
 
 
-here_flow_url="https://traffic.api.here.com/traffic/6.1/flow.json\
+here_flow_url="https://traffic.api.here.com/traffic/6.2/flow.xml\
 ?bbox=$BBOX\
 &responseattributes=sh,fc\
 &app_id=$APP_ID\
