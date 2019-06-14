@@ -17,11 +17,9 @@ class TrafficApi:
         retries = Retry(total=retries, backoff_factor=backoff_factor,
                         status_forcelist=status_forcelist)
         self.session.mount('https://', HTTPAdapter(max_retries=retries))
-        print('hello world')
 
     def flow_by_bbox(self, bbox):
         bbox_formatted = f"{bbox[0]},{bbox[1]}; {bbox[2]},{bbox[3]}"
-        print(bbox_formatted)
         return self.__flow(params={'bbox': bbox_formatted})
 
     def __flow(self, params={}):
