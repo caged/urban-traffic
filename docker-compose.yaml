@@ -6,6 +6,9 @@ services:
     restart: always
     volumes:
       - ./:/app
+    environment:
+      APP_ID: $APP_ID
+      APP_CODE: $APP_CODE
   db:
     image: postgres
     restart: always
