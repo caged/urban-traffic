@@ -10,7 +10,7 @@ const fetch = require('node-fetch')
 const width = 256 * 8
 const height = width
 
-const out = fs.createWriteStream('out5.png')
+const out = fs.createWriteStream('out.png')
 const canvas = createCanvas(width, height)
 const ctx = canvas.getContext('2d')
 
@@ -101,8 +101,8 @@ function writeTrafficData(json) {
         for (const fi of fis.FI) {
           const ls = lineString(fi)
           const { fc, cf, tmc } = ls.properties
-          if (cf.JF >= 3) {
-            console.log(tmc.DE, cf.JF)
+          if (cf.JF >= -1) {
+            console.log(rw.DE, tmc.DE, tmc.QD, cf.JF)
             ctx.strokeStyle = color(cf.JF)
             ctx.lineWidth = thickness(fc)
             ctx.beginPath()
@@ -125,7 +125,7 @@ tileData
     writeTrafficData(
       JSON.parse(
         // fs.readFileSync('test-flow-ro-03-18-19-09:05:17.json', 'utf-8')
-        fs.readFileSync('test-flow-ro-06-09-19-09:33:00.json', 'utf-8')
+        fs.readFileSync('flow.json', 'utf-8')
       )
     )
   )
