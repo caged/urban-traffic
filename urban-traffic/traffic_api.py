@@ -2,6 +2,7 @@ import sys
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
+from traffic_flow import TrafficFlow
 
 
 class TrafficApi:
@@ -23,7 +24,8 @@ class TrafficApi:
         return self.__flow(params={'bbox': bbox_formatted})
 
     def __flow(self, params={}):
-        return self.__get(f'{self.base_url}/6.2/flow.json', params)
+        flow = self.__get(f'{self.base_url}/6.2/flow.json', params)
+        return TrafficFlow(payload=flow.json())
 
     def __get(self, url, params = {}):
         default_params = {'app_id': self.app_id, 'app_code': self.app_code}
