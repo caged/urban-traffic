@@ -2,15 +2,17 @@
 
 source .env
 
-BBOX="45.391700,-122.826462;45.657728,-122.347183"
+
+BBOX="45.4325364521453,-122.836749373901;45.6528775916738,-122.472024186595"
 
 here_incident_url="https://traffic.api.here.com/traffic/6.3/incidents.json\
 ?app_id=${APP_ID}\
 &app_code=${APP_CODE}\
 &bbox=$BBOX"
 
+# &responseattributes=sh,fc\
 
-here_flow_url="https://traffic.api.here.com/traffic/6.2/flow.xml\
+here_flow_url="https://traffic.api.here.com/traffic/6.2/flow.json\
 ?bbox=$BBOX\
 &responseattributes=sh,fc\
 &app_id=$APP_ID\
