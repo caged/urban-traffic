@@ -1,0 +1,61 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const commander = require('commander')
+
+commander
+  .option('-i, --input <file>', 'input traffic flow data file')
+  .option('-o, --output <file>', 'output geojson file')
+  .parse(process.argv)
+
+const raw = fs.readFileSync(commander.input)
+const data = JSON.parse(raw, 'utf-8')
+
+// TODO: Look into d3.geoLength(object) and d3.geoInterpolate(a, b)
+// to account for SS_TYPE length where traffic data is more precise
+// than the given flow item
+const createLineString = (roadway, flowitem) => {
+  const { LI, DE: ROADWAY, PBT } = roadway
+  const { SHP, TMC } = flowitem
+  const cf = flowitem.CF[0] // only one CF
+  if (cf.SSS) delete cf.SSS // disregard subsegments for now
+
+  const properties = Object.assign(TMC, cf, { LI, ROADWAY, PBT })
+
+  const coordinates = SHP.map(leg => {
+    const coords = leg.value[0].trim()
+    return coords.split(' ').map(v => {
+      return v
+        .split(',')
+        .map(parseFloat)
+        .reverse()
+    })
+  })
+  return {
+    type: 'Feature',
+    geometry: {
+      type: 'MultiLineString',
+      coordinates
+    },
+    properties
+  }
+}
+
+const collection = {
+  type: 'FeatureCollection',
+  features: []
+}
+
+for (const rws of data.RWS) {
+  for (const roadway of rws.RW) {
+    const { mid, FIS: fiss, LI: li, DE: de, PBT: pbt } = roadway
+    for (const fis of fiss) {
+      for (const flowitem of fis.FI) {
+        const feature = createLineString(roadway, flowitem)
+        collection.features.push(feature)
+      }
+    }
+  }
+}
+
+fs.writeFileSync(commander.output, JSON.stringify(collection))
