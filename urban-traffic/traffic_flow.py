@@ -47,7 +47,6 @@ class TrafficFlow:
             yields a feature.
 
         """
-        process_date = datetime.now().replace(second=0, microsecond=0)
         props = {}
 
         tmc = flowitem['TMC']
@@ -76,7 +75,6 @@ class TrafficFlow:
         props['roadway'] = roadway['DE']
         props['pbt'] = datetime.strptime(
             roadway['PBT'], '%Y-%m-%dT%H:%M:%SZ').replace(second=0, microsecond=0)
-        props['processed'] = process_date
         coordinates = []
 
         for leg in shp:
