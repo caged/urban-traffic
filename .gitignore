@@ -6,3 +6,4 @@ raw
 *.xml
 *.json
 __pycache__
+*.geojson
