@@ -2,9 +2,11 @@
 
 source .env
 
-
+# Portland
 BBOX="45.4325364521453,-122.836749373901;45.6528775916738,-122.472024186595"
-BBOX_SMALL="45.46618149694970157,-122.63985035760347841;45.48388083192699582,-122.60161167974422369"
+
+# Smaller section
+# BBOX="45.46618149694970157,-122.63985035760347841;45.48388083192699582,-122.60161167974422369"
 
 here_incident_url="https://traffic.api.here.com/traffic/6.3/incidents.json\
 ?app_id=${APP_ID}\
@@ -14,9 +16,9 @@ here_incident_url="https://traffic.api.here.com/traffic/6.3/incidents.json\
 # &responseattributes=sh,fc\
 
 here_flow_url="https://traffic.api.here.com/traffic/6.2/flow.json\
-?bbox=$BBOX_SMALL\
+?bbox=$BBOX\
 &responseattributes=sh,fc\
 &app_id=$APP_ID\
 &app_code=$APP_CODE"
 
-curl $here_flow_url
+curl $here_flow_url -o "flow-$(date +"%m-%d-%y-%T").json"
