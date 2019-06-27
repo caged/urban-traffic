@@ -6,6 +6,10 @@ const commander = require('commander')
 commander
   .option('-i, --input <file>', 'input traffic flow data file')
   .option('-o, --output <file>', 'output geojson file')
+  .option(
+    '--ls, --line-string',
+    'Force LineString geo instead of MultiLineString.'
+  )
   .parse(process.argv)
 
 const raw = fs.readFileSync(commander.input)
@@ -13,17 +17,25 @@ const data = JSON.parse(raw, 'utf-8')
 
 // TODO: Look into d3.geoLength(object) and d3.geoInterpolate(a, b)
 // to account for SS_TYPE length where traffic data is more precise
-// than the given flow item
+// than the given flow item.  All SS item LE (lengths) are equal to the
+// FI (flow item) LE (length), so you need to interpolate in the direction
+// of the flow.
 const createLineString = (roadway, flowitem) => {
   const { LI, DE: ROADWAY, PBT } = roadway
   const { SHP, TMC } = flowitem
   const cf = flowitem.CF[0] // only one CF
-  if (cf.SSS) delete cf.SSS // disregard subsegments for now
+  if (cf.SSS) {
+    console.log(cf.JF, cf.SSS.SS[0])
+    delete cf.SSS // disregard subsegments for now
+  }
 
   const properties = Object.assign(TMC, cf, { LI, ROADWAY, PBT })
 
-  const coordinates = SHP.map(leg => {
+  const fc = SHP[0].FC
+  const fcs = []
+  let coordinates = SHP.map(leg => {
     const coords = leg.value[0].trim()
+    fcs.push(leg.FC)
     return coords.split(' ').map(v => {
       return v
         .split(',')
@@ -31,10 +43,17 @@ const createLineString = (roadway, flowitem) => {
         .reverse()
     })
   })
+
+  if (!fcs.every(val => val === fc)) {
+    // console.log(properties)
+  }
+
+  if (commander.lineString) coordinates = coordinates.flat(1)
+
   return {
     type: 'Feature',
     geometry: {
-      type: 'MultiLineString',
+      type: commander.lineString ? 'LineString' : 'MultiLineString',
       coordinates
     },
     properties
