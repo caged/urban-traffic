@@ -1,5 +1,6 @@
 from datetime import datetime, date
 
+
 class TrafficFlow:
     """Takes traffic flow dat from the Here API and normalizes to a
        GeoJSON representation.
@@ -15,9 +16,9 @@ class TrafficFlow:
         raw dict payload from here api
 
     """
+
     def __init__(self, payload):
         self.__raw = payload
-
 
     def features(self):
         """Yields GeoJSON Feature objects
@@ -50,7 +51,7 @@ class TrafficFlow:
         props = {}
 
         tmc = flowitem['TMC']
-        cf  = flowitem['CF'][0]
+        cf = flowitem['CF'][0]
         shp = flowitem['SHP']
 
         props['de'] = tmc['DE']
@@ -73,10 +74,10 @@ class TrafficFlow:
 
         props['li'] = roadway['LI']
         props['roadway'] = roadway['DE']
-        props['pbt'] = datetime.strptime(roadway['PBT'], '%Y-%m-%dT%H:%M:%SZ').replace(second=0, microsecond=0)
+        props['pbt'] = datetime.strptime(
+            roadway['PBT'], '%Y-%m-%dT%H:%M:%SZ').replace(second=0, microsecond=0)
         props['processed'] = process_date
         coordinates = []
-
 
         for leg in shp:
             coords = leg['value'][0].strip()
@@ -93,7 +94,6 @@ class TrafficFlow:
         }
 
         return feature
-
 
     def __parse_features(self):
         # feature_collection = []
