@@ -77,6 +77,7 @@ class TrafficFlow:
         props['processed'] = process_date
         coordinates = []
 
+
         for leg in shp:
             coords = leg['value'][0].strip()
             points = [[float(v) for v in reversed(c.split(','))] for c in coords.split(' ')]
