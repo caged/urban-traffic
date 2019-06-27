@@ -1,13 +1,15 @@
-FROM node:12.4.0
+FROM python:3.7.3
 
-# RUN apt-get update && apt-get -y install cron
+RUN apt-get update
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN pip install pipenv
 
-RUN npm install
+COPY Pipfile .
+COPY Pipfile.lock .
+RUN pipenv install --system --deploy
 
 COPY . /app
 
-CMD /bin/bash
+ENTRYPOINT ["./script/entrypoint.sh"]

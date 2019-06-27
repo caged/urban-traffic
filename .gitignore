@@ -5,3 +5,5 @@ node_modules
 raw
 *.xml
 *.json
+__pycache__
+*.geojson
