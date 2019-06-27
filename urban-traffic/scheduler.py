@@ -6,7 +6,8 @@ import json
 from xml.etree import ElementTree
 
 
-def say_hello(message="Hello World"):
+def process_traffic_data():
+    process_date = datetime.now().replace(second=0, microsecond=0)
     traffic = TrafficApi(app_id=os.environ['APP_ID'],
                          app_code=os.environ['APP_CODE'])
     tf = traffic.flow_by_bbox(
@@ -16,4 +17,4 @@ def say_hello(message="Hello World"):
         print(feature)
 
 
-say_hello()
+process_traffic_data()
