@@ -7,3 +7,4 @@ raw
 *.json
 __pycache__
 *.geojson
+pg_data

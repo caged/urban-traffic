@@ -6,15 +6,28 @@ services:
     restart: always
     volumes:
       - ./:/app
+    depends_on:
+      - db
     environment:
       APP_ID: $APP_ID
       APP_CODE: $APP_CODE
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASS: $POSTGRES_PASS
+      POSTGRES_DBNAME: $POSTGRES_DBNAME
   db:
-    image: postgres
+    image: kartoza/postgis:11.0-2.5
     restart: always
-
+    volumes:
+      - ./pg_data:/var/lib/postgresql
+      - ./schema.sql:/docker-entrypoint-initdb.d/setup-db.sql
+    environment:
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASS: $POSTGRES_PASS
+      POSTGRES_DBNAME: $POSTGRES_DBNAME
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+      - db

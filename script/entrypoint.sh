@@ -1,4 +1,4 @@
 #!/bin/bash
-# while true; do sleep 15 ; echo "background"; done &
 
-while true; do python "urban-traffic/scheduler.py"; sleep 10 ; done
+# Run every 5 minutes
+while true; do python "urban-traffic/scheduler.py"; sleep 300 ; done

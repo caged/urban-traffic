@@ -60,7 +60,7 @@ class TrafficFlow:
 
         props['ty'] = cf['TY']
         props['sp'] = float(cf['SP'])
-        props['su'] = float(cf['SU'])
+        props['su'] = float(cf.get('SU', -1))
         props['ff'] = float(cf['FF'])
         props['jf'] = float(cf['JF'])
         props['cn'] = float(cf['CN'])
